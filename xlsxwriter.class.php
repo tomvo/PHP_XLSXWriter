@@ -220,7 +220,7 @@ class XLSXWriter
 
 	protected function writeCell(XLSXWriter_BuffererWriter &$file, $row_number, $column_number, $value, $cell_format)
 	{
-		static $styles = array('money'=>1,'dollar'=>1,'datetime'=>2,'date'=>3,'string'=>0);
+		static $styles = array('money'=>1,'dollar'=>1,'datetime'=>2,'date'=>4,'string'=>0);
 		$cell = self::xlsCell($row_number, $column_number);
 		$s = isset($styles[$cell_format]) ? $styles[$cell_format] : '0';
 
@@ -247,11 +247,12 @@ class XLSXWriter
 		$file = new XLSXWriter_BuffererWriter($temporary_filename);
 		$file->write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'."\n");
 		$file->write('<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">');
-		$file->write('<numFmts count="4">');
+		$file->write('<numFmts count="5">');
 		$file->write(		'<numFmt formatCode="GENERAL" numFmtId="164"/>');
 		$file->write(		'<numFmt formatCode="[$$-1009]#,##0.00;[RED]\-[$$-1009]#,##0.00" numFmtId="165"/>');
 		$file->write(		'<numFmt formatCode="YYYY-MM-DD\ HH:MM:SS" numFmtId="166"/>');
 		$file->write(		'<numFmt formatCode="YYYY-MM-DD" numFmtId="167"/>');
+		$file->write(		'<numFmt formatCode="DD-MM-YYYY" numFmtId="168"/>');
 		$file->write('</numFmts>');
 		$file->write('<fonts count="4">');
 		$file->write(		'<font><name val="Arial"/><charset val="1"/><family val="2"/><sz val="10"/></font>');
@@ -291,6 +292,7 @@ class XLSXWriter
 		$file->write(		'<xf applyAlignment="false" applyBorder="false" applyFont="false" applyProtection="false" borderId="0" fillId="0" fontId="0" numFmtId="165" xfId="0"/>');
 		$file->write(		'<xf applyAlignment="false" applyBorder="false" applyFont="false" applyProtection="false" borderId="0" fillId="0" fontId="0" numFmtId="166" xfId="0"/>');
 		$file->write(		'<xf applyAlignment="false" applyBorder="false" applyFont="false" applyProtection="false" borderId="0" fillId="0" fontId="0" numFmtId="167" xfId="0"/>');
+		$file->write(		'<xf applyAlignment="false" applyBorder="false" applyFont="false" applyProtection="false" borderId="0" fillId="0" fontId="0" numFmtId="168" xfId="0"/>');
 		$file->write(	'</cellXfs>');
 		$file->write(	'<cellStyles count="6">');
 		$file->write(		'<cellStyle builtinId="0" customBuiltin="false" name="Normal" xfId="0"/>');
