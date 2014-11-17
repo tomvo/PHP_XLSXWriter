@@ -220,7 +220,7 @@ class XLSXWriter
 
 	protected function writeCell(XLSXWriter_BuffererWriter &$file, $row_number, $column_number, $value, $cell_format)
 	{
-		static $styles = array('money'=>1,'dollar'=>1,'datetime'=>2,'date'=>4,'string'=>0);
+		static $styles = array('money'=>1,'dollar'=>1,'datetime'=>2,'date'=>4,'string'=>0, 'float' => 5, 'int' => 6);
 		$cell = self::xlsCell($row_number, $column_number);
 		$s = isset($styles[$cell_format]) ? $styles[$cell_format] : '0';
 
@@ -230,7 +230,16 @@ class XLSXWriter
 			$file->write('<c r="'.$cell.'" s="'.$s.'" t="n"><v>'.intval(self::convert_date_time($value)).'</v></c>');
 		} elseif ($cell_format=='datetime') {
 			$file->write('<c r="'.$cell.'" s="'.$s.'" t="n"><v>'.self::convert_date_time($value).'</v></c>');
-		} elseif (!is_string($value)) {
+		} elseif (is_numeric($value)) {
+			if(ctype_digit(strval($value))){
+				$s = $styles['int'];
+			}else{
+				$s = $styles['float'];
+				$fraction = $value - floor( $value );
+
+				if(empty($fraction)) $s = $styles['int'];
+			}
+
 			$file->write('<c r="'.$cell.'" s="'.$s.'" t="n"><v>'.($value*1).'</v></c>');//int,float, etc
 		} elseif ($value{0}!='0' && ctype_digit($value)){ //excel wants to trim leading zeros
 			$file->write('<c r="'.$cell.'" s="'.$s.'" t="n"><v>'.($value*1).'</v></c>');//numeric string
@@ -253,6 +262,8 @@ class XLSXWriter
 		$file->write(		'<numFmt formatCode="YYYY-MM-DD\ HH:MM:SS" numFmtId="166"/>');
 		$file->write(		'<numFmt formatCode="YYYY-MM-DD" numFmtId="167"/>');
 		$file->write(		'<numFmt formatCode="DD-MM-YYYY" numFmtId="168"/>');
+		$file->write(		'<numFmt formatCode="#.###" numFmtId="169"/>');
+		$file->write(		'<numFmt formatCode="#" numFmtId="170"/>');
 		$file->write('</numFmts>');
 		$file->write('<fonts count="4">');
 		$file->write(		'<font><name val="Arial"/><charset val="1"/><family val="2"/><sz val="10"/></font>');
@@ -293,6 +304,8 @@ class XLSXWriter
 		$file->write(		'<xf applyAlignment="false" applyBorder="false" applyFont="false" applyProtection="false" borderId="0" fillId="0" fontId="0" numFmtId="166" xfId="0"/>');
 		$file->write(		'<xf applyAlignment="false" applyBorder="false" applyFont="false" applyProtection="false" borderId="0" fillId="0" fontId="0" numFmtId="167" xfId="0"/>');
 		$file->write(		'<xf applyAlignment="false" applyBorder="false" applyFont="false" applyProtection="false" borderId="0" fillId="0" fontId="0" numFmtId="168" xfId="0"/>');
+		$file->write(		'<xf applyAlignment="false" applyBorder="false" applyFont="false" applyProtection="false" borderId="0" fillId="0" fontId="0" numFmtId="169" xfId="0"/>');
+		$file->write(		'<xf applyAlignment="false" applyBorder="false" applyFont="false" applyProtection="false" borderId="0" fillId="0" fontId="0" numFmtId="170" xfId="0"/>');
 		$file->write(	'</cellXfs>');
 		$file->write(	'<cellStyles count="6">');
 		$file->write(		'<cellStyle builtinId="0" customBuiltin="false" name="Normal" xfId="0"/>');
